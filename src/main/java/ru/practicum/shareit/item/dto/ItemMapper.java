@@ -1,29 +1,64 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.dto.BookingBriefDto;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.comment.Comment;
+import ru.practicum.shareit.item.comment.dto.CommentMapper;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @UtilityClass
 public class ItemMapper {
 
     public static ItemDto toItemDto(Item item) {
-        return new ItemDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                item.getRequest() != null ? item.getRequest() : 0
+        return ItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .build();
+    }
+
+    public static ItemDto toItemDto(Item item, List<Comment> comments) {
+        ItemDto itemDto = toItemDto(item);
+        if (comments != null) {
+            itemDto.setComments(comments
+                    .stream()
+                    .map(CommentMapper::toCommentDto)
+                    .collect(Collectors.toList()));
+        }
+
+        return itemDto;
+    }
+
+    public static ItemDto toItemDto(Item item, Booking lastBooking, Booking nextBooking,
+                                    List<Comment> comments) {
+        ItemDto itemDto = toItemDto(item, comments);
+        if (lastBooking != null) {
+            itemDto.setLastBooking(bookingToBookingBriefDto(lastBooking));
+        }
+        if (nextBooking != null) {
+            itemDto.setNextBooking(bookingToBookingBriefDto(nextBooking));
+        }
+        return itemDto;
+    }
+
+    public static Item toItem(ItemInDto itemDto) {
+        return new Item(
+                itemDto.getName(),
+                itemDto.getDescription(),
+                itemDto.getAvailable()
         );
     }
 
-    public static Item toItem(ItemDto itemDto) {
-        return new Item(
-                itemDto.getId(),
-                itemDto.getName(),
-                itemDto.getDescription(),
-                itemDto.getAvailable(),
-                null,
-                itemDto.getRequest()
-        );
+    private BookingBriefDto bookingToBookingBriefDto(Booking booking) {
+        BookingBriefDto mapped = new BookingBriefDto();
+        mapped.setId(booking.getId());
+        mapped.setBookerId(booking.getBooker().getId());
+        return mapped;
     }
 }
