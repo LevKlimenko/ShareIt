@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
@@ -12,8 +13,8 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,38 +27,49 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Transactional
     @Override
-    public ItemRequestDtoResponse addItemRequest(Long userId, ItemRequestDto itemRequestDto) {
+    public ItemRequestDto create(Long userId, ItemRequestDtoResponse itemRequestDto) {
         User user = userRepository.get(userId);
-        return ItemRequestMapper.toItemRequestDtoResponse(
-                itemRequestRepository.save(new ItemRequest(0L, itemRequestDto.getDescription(),
-                        user, LocalDateTime.now())), new ArrayList<>());
+        ItemRequest request = new ItemRequest();
+        request.setDescription(itemRequestDto.getDescription());
+        request.setRequester(user);
+        request.setCreated(LocalDateTime.now());
+        itemRequestRepository.save(request);
+        return ItemRequestMapper.toDto(request);
+
     }
 
     @Override
-    public List<ItemRequestDtoResponse> findAllByOwner(Long userId) {
+    public List<ItemRequestDto> findAllByOwner(Long userId) {
         userRepository.get(userId);
-        List<ItemRequest> requests = itemRequestRepository.findAllByRequestorIdOrderByCreatedDesc(userId);
-        return requestToDto(requests);
+        return requestToDto(itemRequestRepository.findAllByRequesterIdOrderByCreatedDesc(userId));
     }
 
     @Override
-    public List<ItemRequestDtoResponse> findAll(Long userId, Pageable pageable) {
-    userRepository.get(userId);
-    List<ItemRequest> requests = itemRequestRepository.findAllByOtherUser(userId,pageable);
-    return requestToDto(requests);
+    public List<ItemRequestDto> findAll(Long userId, Pageable pageable) {
+        userRepository.get(userId);
+        return requestToDto(itemRequestRepository.findAllByRequesterIdNot(userId, pageable)
+                .getContent());
     }
 
     @Override
-    public ItemRequestDtoResponse findRequest(Long userId, Long requestId) {
+    public ItemRequestDto get(Long userId, Long requestId) {
         userRepository.get(userId);
         ItemRequest itemRequest = itemRequestRepository.get(requestId);
-        return ItemRequestMapper.toItemRequestDtoResponse(itemRequest,
-                itemRepository.findAllByRequestId(itemRequest.getId()));
+        return ItemRequestMapper.toDto(itemRequest, itemRepository.findAllByRequestId(requestId));
     }
 
-    private List<ItemRequestDtoResponse> requestToDto(List<ItemRequest> requests) {
-        return requests.stream().map(request -> ItemRequestMapper.toItemRequestDtoResponse(request,
-                itemRepository.findAllByRequestId(request.getId()))).collect(Collectors.toList());
+    private List<ItemRequestDto> requestToDto(List<ItemRequest> requests) {
+        List<Long> requestIds = requests
+                .stream()
+                .map(ItemRequest::getId)
+                .collect(Collectors.toList());
+        Map<Long, List<Item>> itemsByRequest = itemRepository.findAllByRequestIdIn(requestIds)
+                .stream()
+                .collect(Collectors.groupingBy(Item::getRequestId));
+        return requests
+                .stream()
+                .map(request -> ItemRequestMapper.toDto(request, itemsByRequest.get(request.getId())))
+                .collect(Collectors.toList());
     }
 
 }

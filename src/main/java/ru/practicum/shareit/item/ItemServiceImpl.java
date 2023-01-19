@@ -43,7 +43,6 @@ public class ItemServiceImpl implements ItemService {
         if (Objects.isNull(itemDto.getAvailable())) {
             throw new ConflictException("Available can't be NULL");
         }
-
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(user);
         itemRepository.save(item);

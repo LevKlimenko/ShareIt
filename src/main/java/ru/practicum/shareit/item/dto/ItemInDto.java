@@ -13,4 +13,5 @@ public class ItemInDto {
     private String description;
     @NotNull(groups = {Create.class})
     private Boolean available;
+    private Long requestId;
 }

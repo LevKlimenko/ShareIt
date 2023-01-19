@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingIncomingDto;
@@ -8,6 +9,7 @@ import ru.practicum.shareit.booking.enumBooking.State;
 import ru.practicum.shareit.exceptions.InvalidStateException;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -34,14 +36,18 @@ public class BookingController {
 
     @GetMapping()
     public List<BookingDto> findAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                    @RequestParam(required = false, defaultValue = "ALL") String state) {
-        return service.findAllForBooker(userId, parseBookingState(state));
+                                    @RequestParam(required = false, defaultValue = "ALL") String state,
+                                    @RequestParam(defaultValue = "0") @Min(0) int from,
+                                    @RequestParam(defaultValue = "20") @Min(1) int size) {
+        return service.findAllForBooker(userId, parseBookingState(state), PageRequest.of(from, size, BookingRepository.SORT_BY_DESC));
     }
 
     @GetMapping("/owner")
     public List<BookingDto> findAllOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                         @RequestParam(defaultValue = "ALL") String state) {
-        return service.findAllForOwner(userId, parseBookingState(state));
+                                         @RequestParam(defaultValue = "ALL") String state,
+                                         @RequestParam(defaultValue = "0") @Min(0) int from,
+                                         @RequestParam(defaultValue = "20") @Min(1) int size) {
+        return service.findAllForOwner(userId, parseBookingState(state), PageRequest.of(from, size, BookingRepository.SORT_BY_DESC));
     }
 
     private State parseBookingState(String state) {

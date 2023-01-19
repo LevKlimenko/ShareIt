@@ -20,6 +20,7 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .requestId(item.getRequestId())
                 .build();
     }
 
@@ -31,7 +32,6 @@ public class ItemMapper {
                     .map(CommentMapper::toCommentDto)
                     .collect(Collectors.toList()));
         }
-
         return itemDto;
     }
 
@@ -51,7 +51,8 @@ public class ItemMapper {
         return new Item(
                 itemDto.getName(),
                 itemDto.getDescription(),
-                itemDto.getAvailable()
+                itemDto.getAvailable(),
+                itemDto.getRequestId()
         );
     }
 

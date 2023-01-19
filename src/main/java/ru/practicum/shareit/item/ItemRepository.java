@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.exceptions.NotFoundException;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,4 +26,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findAllByOwnerId(Long id);
 
     List<Item> findAllByRequestId(Long requestId);
+
+    List<Item> findAllByRequestIdIn(Collection<Long> requestIds);
 }

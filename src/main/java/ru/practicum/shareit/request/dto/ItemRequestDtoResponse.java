@@ -1,17 +1,14 @@
 package ru.practicum.shareit.request.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.practicum.shareit.item.dto.ItemDto;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import javax.validation.constraints.NotBlank;
 
 @Data
-@AllArgsConstructor
 public class ItemRequestDtoResponse {
     private Long id;
+    @NotBlank(groups = {Create.class})
     private String description;
-    private LocalDateTime created;
-    private List<ItemDto> items;
+    //private LocalDateTime created;
+    //private List<ItemDto> items;
 }
