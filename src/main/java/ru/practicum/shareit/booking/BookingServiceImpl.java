@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -105,8 +104,7 @@ public class BookingServiceImpl implements BookingService {
             default:
                 throw new InvalidStateException("Unknown state: " + state);
         }
-        return Optional.ofNullable(result)
-                .orElseGet(Collections::emptyList)
+        return result
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
