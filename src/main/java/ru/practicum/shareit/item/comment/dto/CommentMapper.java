@@ -26,4 +26,8 @@ public class CommentMapper {
                 .created(LocalDateTime.now())
                 .build();
     }
+
+    public static CommentIncomingDto toCommentIncomingDto(Comment comment){
+        return new CommentIncomingDto(comment.getText());
+    }
 }

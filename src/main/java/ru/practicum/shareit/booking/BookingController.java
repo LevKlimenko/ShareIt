@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingIncomingDto;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
+@Validated
 public class BookingController {
     private final BookingService service;
 
@@ -39,7 +41,7 @@ public class BookingController {
                                     @RequestParam(required = false, defaultValue = "ALL") String state,
                                     @RequestParam(defaultValue = "0") @Min(0) int from,
                                     @RequestParam(defaultValue = "20") @Min(1) int size) {
-        return service.findAllForBooker(userId, parseBookingState(state), PageRequest.of(from, size, BookingRepository.SORT_BY_DESC));
+        return service.findAllForBooker(userId, parseBookingState(state), PageRequest.of(from/size, size, BookingRepository.SORT_BY_DESC));
     }
 
     @GetMapping("/owner")
@@ -47,7 +49,7 @@ public class BookingController {
                                          @RequestParam(defaultValue = "ALL") String state,
                                          @RequestParam(defaultValue = "0") @Min(0) int from,
                                          @RequestParam(defaultValue = "20") @Min(1) int size) {
-        return service.findAllForOwner(userId, parseBookingState(state), PageRequest.of(from, size, BookingRepository.SORT_BY_DESC));
+        return service.findAllForOwner(userId, parseBookingState(state), PageRequest.of(from/size, size, BookingRepository.SORT_BY_DESC));
     }
 
     private State parseBookingState(String state) {

@@ -10,7 +10,7 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRequestRepository itemRequestRepository;
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Transactional
     @Override
     public ItemRequestDto create(Long userId, ItemRequestDtoResponse itemRequestDto) {
-        User user = userRepository.get(userId);
+        User user = userService.findById(userId);
         ItemRequest request = new ItemRequest();
         request.setDescription(itemRequestDto.getDescription());
         request.setRequester(user);
@@ -40,20 +40,20 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> findAllByOwner(Long userId) {
-        userRepository.get(userId);
+        userService.findById(userId);
         return requestToDto(itemRequestRepository.findAllByRequesterIdOrderByCreatedDesc(userId));
     }
 
     @Override
     public List<ItemRequestDto> findAll(Long userId, Pageable pageable) {
-        userRepository.get(userId);
+        userService.findById(userId);
         return requestToDto(itemRequestRepository.findAllByRequesterIdNot(userId, pageable)
                 .getContent());
     }
 
     @Override
     public ItemRequestDto get(Long userId, Long requestId) {
-        userRepository.get(userId);
+        userService.findById(userId);
         ItemRequest itemRequest = itemRequestRepository.get(requestId);
         return ItemRequestMapper.toDto(itemRequest, itemRepository.findAllByRequestId(requestId));
     }

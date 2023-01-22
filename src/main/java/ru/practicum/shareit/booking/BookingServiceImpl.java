@@ -17,7 +17,7 @@ import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -30,14 +30,15 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final ItemRepository itemRepository;
 
     @Override
     @Transactional
     public BookingDto save(Long userId, BookingIncomingDto dto) {
-        User booker = userRepository.get(userId);
-        Item item = itemRepository.get(dto.getItemId());
+        User booker = userService.findById(userId);
+        Item item = itemRepository.findById(dto.getItemId())
+                .orElseThrow(()-> new NotFoundException("Item with id=" + dto.getItemId() + " not found"));
         if (userId.equals(item.getOwner().getId())) {
             throw new NotFoundException("The owner of the Item cannot booking his Item");
         }
@@ -52,7 +53,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDto approve(Long userId, Long bookingId, Boolean approved) {
-        userRepository.get(userId);
+        userService.findById(userId);
         Booking booking = bookingRepository.get(bookingId);
         if (!booking.getItem().getOwner().getId().equals(userId)) {
             throw new NotFoundException("Item ID=" + booking.getItem().getId() + "doesn't belong to the user ID=" + userId);
@@ -70,7 +71,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto findById(Long userId, Long bookingId) {
-        User user = userRepository.get(userId);
+        User user = userService.findById(userId);
         Booking booking = bookingRepository.get(bookingId);
         if (!booking.getBooker().equals(user) && !booking.getItem().getOwner().equals(user)) {
             throw new NotFoundException("It's not possible to get booking id=" + bookingId + " for user id=" + userId);
@@ -80,9 +81,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> findAllForBooker(Long userId, State state, Pageable pageable) {
-        userRepository.get(userId);
+        userService.findById(userId);
         LocalDateTime now = LocalDateTime.now();
-        Page<Booking> result;
+        List<Booking> result;
         switch (state) {
             case ALL:
                 result = bookingRepository.findAllByBookerId(userId, pageable);
@@ -106,7 +107,6 @@ public class BookingServiceImpl implements BookingService {
                 throw new InvalidStateException("Unknown state: " + state);
         }
         return result
-                .getContent()
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
@@ -114,12 +114,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> findAllForOwner(Long userId, State state, Pageable pageable) {
-        userRepository.get(userId);
+        userService.findById(userId);
         if (itemRepository.findFirstByOwnerId(userId).isEmpty()) {
             return Collections.emptyList();
         }
         LocalDateTime now = LocalDateTime.now();
-        Page<Booking> result;
+        List<Booking> result;
         switch (state) {
             case ALL:
                 result = bookingRepository.findAllByOwner(userId, pageable);
@@ -143,7 +143,6 @@ public class BookingServiceImpl implements BookingService {
                 throw new InvalidStateException("Unknown state: " + state);
         }
         return result
-                .getContent()
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
