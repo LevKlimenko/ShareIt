@@ -8,9 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.booking.enumBooking.Status;
+import ru.practicum.shareit.exceptions.BadRequestException;
 import ru.practicum.shareit.exceptions.ForbiddenException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.comment.Comment;
@@ -20,6 +19,7 @@ import ru.practicum.shareit.item.comment.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemInDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
@@ -51,23 +51,26 @@ public class ItemServiceImplTest {
     User user;
     Item item;
     ItemInDto itemInDto;
-    ItemDto itemDto;
     Comment comment;
-    Booking booking;
 
     @BeforeEach
     void beforeEach() {
         user = new User(1L, "user", "user@mail.ru");
         item = new Item(1L, "item", "itemDesc", true, user, null, null, null, null);
-        itemDto = new ItemDto(1L, "item", "itemDesc", true, null, null, null, null);
-        itemInDto = ItemInDto.builder().name("item").description("itemDesc").available(true).requestId(1L).build();
+        itemInDto = ItemInDto.builder()
+                .name("item")
+                .description("itemDesc")
+                .available(true)
+                .requestId(1L)
+                .build();
         comment = new Comment(1L, "comment", item, user, LocalDateTime.now());
-        booking = Booking.builder().id(1L).item(item).status(Status.APPROVED).start(LocalDateTime.now()).end(LocalDateTime.now().plusNanos(2)).build();
+
     }
 
     @Test
     void createItemOk() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(itemRequestRepository.findById(anyLong())).thenReturn(Optional.of(new ItemRequest()));
         when(itemRepository.save(any())).thenReturn(item);
         ItemDto itemDto1 = itemService.save(user.getId(), itemInDto);
         assertNotNull(itemDto1);
@@ -206,14 +209,38 @@ public class ItemServiceImplTest {
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(bookingRepository.countCompletedBooking(anyLong(), anyLong(), any())).thenReturn(1);
         when(commentRepository.save(any())).thenReturn(comment);
-        CommentDto actualComment = itemService.createComment(user.getId(), item.getId(), CommentMapper.toCommentIncomingDto(comment));
+        CommentDto actualComment = itemService.createComment(user.getId(), item.getId(),
+                CommentMapper.toCommentIncomingDto(comment));
 
         assertNotNull(actualComment);
         assertEquals(CommentDto.class, actualComment.getClass());
         assertEquals(comment.getId(), actualComment.getId());
         assertEquals(comment.getText(), actualComment.getText());
         assertEquals(user.getName(), actualComment.getAuthorName());
+    }
 
+    @Test
+    void commentedWithoutBooking() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
+        when(bookingRepository.countCompletedBooking(anyLong(), anyLong(), any())).thenReturn(0);
+        assertThrows(BadRequestException.class,
+                () -> itemService.createComment(user.getId(), item.getId(), CommentMapper.toCommentIncomingDto(comment)));
+    }
+
+    @Test
+    void commentedWithNotFoundItem() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(itemRepository.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class,
+                () -> itemService.createComment(user.getId(), item.getId(), CommentMapper.toCommentIncomingDto(comment)));
+    }
+
+    @Test
+    void commentedWithNotFoundUser() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class,
+                () -> itemService.createComment(user.getId(), item.getId(), CommentMapper.toCommentIncomingDto(comment)));
     }
 
 }

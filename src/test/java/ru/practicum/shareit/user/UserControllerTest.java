@@ -123,7 +123,6 @@ public class UserControllerTest {
     @Test
     void getAllIsOk() {
         Mockito.when(userService.getAll()).thenReturn(List.of(user));
-
         mvc.perform(MockMvcRequestBuilders.get("/users")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .contentType(MediaType.APPLICATION_JSON)

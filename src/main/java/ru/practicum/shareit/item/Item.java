@@ -7,6 +7,7 @@ import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "items")
@@ -48,5 +49,26 @@ public class Item {
         this.description = description;
         this.available = available;
         this.requestId = requestId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return Objects.equals(id, item.id) &&
+                Objects.equals(name, item.name) &&
+                Objects.equals(description, item.description) &&
+                Objects.equals(available, item.available) &&
+                Objects.equals(owner, item.owner) &&
+                Objects.equals(requestId, item.requestId) &&
+                Objects.equals(lastBooking, item.lastBooking) &&
+                Objects.equals(nextBooking, item.nextBooking) &&
+                Objects.equals(comments, item.comments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, available, owner, requestId, lastBooking, nextBooking, comments);
     }
 }

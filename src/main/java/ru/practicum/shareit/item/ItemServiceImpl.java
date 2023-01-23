@@ -22,7 +22,6 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -36,7 +35,6 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
-    private final UserService userService;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
@@ -52,7 +50,7 @@ public class ItemServiceImpl implements ItemService {
 
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(user);
-        if(itemDto.getRequestId() !=null) {
+        if(itemDto.getRequestId() !=null ) {
             itemRequestRepository.findById(itemDto.getRequestId())
                     .orElseThrow(()->new NotFoundException("Request with id=" + itemDto.getRequestId() + " not found"));
         }
