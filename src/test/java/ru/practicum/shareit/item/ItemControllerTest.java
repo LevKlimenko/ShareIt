@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.comment.Comment;
-import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.comment.dto.CommentIncomingDto;
 import ru.practicum.shareit.item.comment.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemInDto;
@@ -24,7 +23,6 @@ import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -85,7 +83,7 @@ public class ItemControllerTest {
         when(itemService.update(anyLong(), anyLong(), any())).thenReturn(ItemMapper.toItemDto(updatedItem));
         mvc.perform(MockMvcRequestBuilders.patch("/items/{itemId}", 1)
                         .header("X-Sharer-User-Id", 1L)
-                        .content(objectMapper.writeValueAsString(item))
+                        .content(objectMapper.writeValueAsString(itemDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -107,7 +105,7 @@ public class ItemControllerTest {
         when(itemService.update(anyLong(), anyLong(), any())).thenThrow(NotFoundException.class);
         mvc.perform(MockMvcRequestBuilders.patch("/items/{itemId}", 1)
                         .header("X-Sharer-User-Id", 1L)
-                        .content(objectMapper.writeValueAsString(item))
+                        .content(objectMapper.writeValueAsString(itemDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());

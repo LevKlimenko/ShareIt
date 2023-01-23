@@ -9,7 +9,8 @@ import ru.practicum.shareit.request.dto.Create;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
 
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Slf4j
@@ -23,7 +24,6 @@ public class ItemRequestController {
     @PostMapping()
     public ItemRequestDto addItemRequest(@RequestHeader("X-Sharer-User-Id") long userId,
                                          @Validated(Create.class) @RequestBody ItemRequestDtoResponse requestDto) {
-        //log.info("Adding a new request successfully. ID= {}, description: {}", request.getId(),request.getDescription());
         return requestService.create(userId, requestDto);
     }
 
@@ -34,12 +34,10 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestDto> findAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                        @Min(0) @RequestParam(defaultValue = "0")
-                                        int from,
-                                        @Min(1) @RequestParam(defaultValue = "10")
-                                        int size) {
+                                        @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                        @RequestParam(defaultValue = "10") @Positive int size) {
         int page = from / size;
-        return requestService.findAll(userId, PageRequest.of(page, size));
+        return requestService.findAll(userId, PageRequest.of(page / size, size));
     }
 
     @GetMapping("{requestId}")

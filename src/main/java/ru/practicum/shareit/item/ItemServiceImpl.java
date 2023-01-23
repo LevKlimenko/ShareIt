@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
@@ -93,13 +94,15 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> findByString(String s,int from,int size) {
-        return itemRepository.findByString(s,PageRequest.of(from/size,size)).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(from/size,size);
+        return itemRepository.findByString(s,pageable).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 
     @Override
     public List<ItemDto> findByUserId(Long id, int from,int size) {
+        Pageable pageable = PageRequest.of(from/size,size);
         findUserById(id);
-        List<Item> items = itemRepository.findAllByOwnerId(id, PageRequest.of(from/size,size));
+        List<Item> items = itemRepository.findAllByOwnerId(id, pageable);
         List<Long> itemIds = items
                 .stream()
                 .map(Item::getId)
@@ -133,7 +136,6 @@ public class ItemServiceImpl implements ItemService {
         if (!isAuthorUsedItem(userId, itemId)) {
             throw new BadRequestException("Comments from users who have not rented a thing are prohibited");
         }
-        //Comment newComment = CommentMapper.toComment(commentIncomingDto, author, item);
         Comment newComment = commentRepository.save(CommentMapper.toComment(commentIncomingDto, author, item));
         return CommentMapper.toCommentDto(newComment);
     }

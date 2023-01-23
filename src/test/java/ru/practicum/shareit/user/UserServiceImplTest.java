@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,61 +39,61 @@ public class UserServiceImplTest {
 
     @Test
     void saveCorrect(){
-        Mockito.when(userRepository.save(ArgumentMatchers.any())).thenReturn(user);
+        when(userRepository.save(any())).thenReturn(user);
 
-        User checkUser = userService.save(user);
-        Assertions.assertEquals(user,checkUser);
-        Mockito.verify(userRepository).save(ArgumentMatchers.any());
+        UserDto checkUser = userService.save(user);
+        Assertions.assertEquals(UserMapper.toUserDto(user),checkUser);
+        verify(userRepository).save(any());
     }
 
     @Test
     void updateWithCorrectId(){
         User newUser = new User(user.getId(), "updateName","updateEmail@email.ru");
-        Mockito.when(userRepository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(user));
-        User updateUser = userService.update(newUser.getId(), newUser);
-        Assertions.assertEquals(newUser.getName(),updateUser.getName());
-        Assertions.assertEquals(newUser.getEmail(),updateUser.getEmail());
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        UserDto updateUser = userService.update(newUser.getId(), newUser);
+        assertEquals(newUser.getName(),updateUser.getName());
+        assertEquals(newUser.getEmail(),updateUser.getEmail());
     }
 
     @Test
     void updateWithIncorrectId(){
         User newUser = new User(user.getId(), "updateName","updateEmail@email.ru");
-        Mockito.when(userRepository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.empty());
-        Assertions.assertThrows(NotFoundException.class,() -> userService.update(newUser.getId(),newUser));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class,() -> userService.update(newUser.getId(),newUser));
     }
 
     @Test
     void getByCorrectId(){
-        Mockito.when(userRepository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(user));
-        User checkUser = userService.findById(ArgumentMatchers.anyLong());
-        Assertions.assertEquals(user,checkUser);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        User checkUser = userService.findById(anyLong());
+        assertEquals(user,checkUser);
     }
 
     @Test
     void getByIncorrectId(){
-        Mockito.when(userRepository.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.empty());
-        Assertions.assertThrows(NotFoundException.class, ()-> userService.findById(ArgumentMatchers.anyLong()));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, ()-> userService.findById(anyLong()));
     }
 
     @Test
     void getAllWithCollectionUser(){
-        Mockito.when(userRepository.findAll()).thenReturn(List.of(user));
+        when(userRepository.findAll()).thenReturn(List.of(user));
         List<User> users = userService.getAll();
-        Assertions.assertEquals(1,users.size());
-        Assertions.assertEquals(user,users.get(0));
+        assertEquals(1,users.size());
+        assertEquals(user,users.get(0));
     }
 
     @Test
     void getAllWithEmptyCollection(){
-        Mockito.when(userRepository.findAll()).thenReturn(Collections.emptyList());
+        when(userRepository.findAll()).thenReturn(Collections.emptyList());
         List<User> users = userService.getAll();
-        Assertions.assertTrue(users.isEmpty());
+        assertTrue(users.isEmpty());
     }
 
     @Test
     void deleteOk(){
-        userService.deleteById(ArgumentMatchers.anyLong());
-        Mockito.verify(userRepository).deleteById(ArgumentMatchers.anyLong());
+        userService.deleteById(anyLong());
+        verify(userRepository).deleteById(anyLong());
     }
 
 }

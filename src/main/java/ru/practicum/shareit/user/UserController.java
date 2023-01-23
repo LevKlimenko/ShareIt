@@ -28,14 +28,14 @@ public class UserController {
 
     @PostMapping
     public UserDto save(@Validated(Create.class) @RequestBody UserDto user) {
-        UserDto addedUser = UserMapper.toUserDto(userService.save(UserMapper.toUser(user)));
+        UserDto addedUser = userService.save(UserMapper.toUser(user));
         log.info("The user have been add, UserID={}", addedUser.getId());
         return addedUser;
     }
 
     @PatchMapping("/{userId}")
     public UserDto updateUser(@PathVariable("userId") Long id, @Validated(Update.class) @RequestBody UserDto user) {
-        UserDto upUser = UserMapper.toUserDto(userService.update(id, UserMapper.toUser(user)));
+        UserDto upUser = userService.update(id, UserMapper.toUser(user));
         log.info("The user have been update, UserID={}", upUser.getId());
         return upUser;
     }

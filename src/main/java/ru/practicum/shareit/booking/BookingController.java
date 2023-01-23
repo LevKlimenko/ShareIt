@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -10,7 +9,8 @@ import ru.practicum.shareit.booking.enumBooking.State;
 import ru.practicum.shareit.exceptions.InvalidStateException;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -39,17 +39,17 @@ public class BookingController {
     @GetMapping()
     public List<BookingDto> findAll(@RequestHeader("X-Sharer-User-Id") Long userId,
                                     @RequestParam(required = false, defaultValue = "ALL") String state,
-                                    @RequestParam(defaultValue = "0") @Min(0) int from,
-                                    @RequestParam(defaultValue = "20") @Min(1) int size) {
-        return service.findAllForBooker(userId, parseBookingState(state), PageRequest.of(from/size, size, BookingRepository.SORT_BY_DESC));
+                                    @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                    @RequestParam(defaultValue = "20") @Positive int size) {
+        return service.findAllForBooker(userId, parseBookingState(state.toUpperCase()), from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDto> findAllOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
                                          @RequestParam(defaultValue = "ALL") String state,
-                                         @RequestParam(defaultValue = "0") @Min(0) int from,
-                                         @RequestParam(defaultValue = "20") @Min(1) int size) {
-        return service.findAllForOwner(userId, parseBookingState(state), PageRequest.of(from/size, size, BookingRepository.SORT_BY_DESC));
+                                         @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                         @RequestParam(defaultValue = "20") @Positive int size) {
+        return service.findAllForOwner(userId, parseBookingState(state.toUpperCase()), from, size);
     }
 
     private State parseBookingState(String state) {

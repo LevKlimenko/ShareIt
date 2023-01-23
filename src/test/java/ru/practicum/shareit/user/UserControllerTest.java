@@ -7,7 +7,6 @@ import lombok.experimental.FieldDefaults;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,13 +14,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserMapper;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = UserController.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -44,132 +48,133 @@ public class UserControllerTest {
     @SneakyThrows
     @Test
     void createUser() {
-        Mockito.when(userService.save(ArgumentMatchers.any())).thenReturn(user);
+        when(userService.save(any())).thenReturn(userDto);
 
         mvc.perform(MockMvcRequestBuilders.post("/users")
                         .content(mapper.writeValueAsString(userDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(user.getId()), Long.class))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(user.getName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email", Matchers.is(user.getEmail())));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", Matchers.is(user.getId()), Long.class))
+                .andExpect(jsonPath("$.name", Matchers.is(user.getName())))
+                .andExpect(jsonPath("$.email", Matchers.is(user.getEmail())));
 
-        Mockito.verify(userService).save(ArgumentMatchers.any());
+        verify(userService).save(any());
     }
 
     @SneakyThrows
     @Test
     void updateUserIsOk() {
         UserDto updateUser = new UserDto(userDto.getId(), "updateUserDto", userDto.getEmail());
-        Mockito.when(userService.update(ArgumentMatchers.anyLong(), ArgumentMatchers.any())).thenReturn(UserMapper.toUser(updateUser));
+        when(userService.update(anyLong(), any())).thenReturn(updateUser);
 
         mvc.perform(MockMvcRequestBuilders.patch("/users/{userId}",1)
                         .content(mapper.writeValueAsString(userDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(updateUser.getId()), Long.class))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(updateUser.getName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email", Matchers.is(updateUser.getEmail())));
-        Mockito.verify(userService).update(ArgumentMatchers.anyLong(), ArgumentMatchers.any());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", Matchers.is(updateUser.getId()), Long.class))
+                .andExpect(jsonPath("$.name", Matchers.is(updateUser.getName())))
+                .andExpect(jsonPath("$.email", Matchers.is(updateUser.getEmail())));
+        verify(userService).update(anyLong(), any());
     }
 
     @SneakyThrows
     @Test
     void updateUserWithBadId() {
-        Mockito.when(userService.update(ArgumentMatchers.anyLong(), ArgumentMatchers.any())).thenThrow(NotFoundException.class);
+        when(userService.update(anyLong(), any())).thenThrow(NotFoundException.class);
 
         mvc.perform(MockMvcRequestBuilders.patch("/users/{userId}",1)
                         .content(mapper.writeValueAsString((userDto)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
-        Mockito.verify(userService).update(ArgumentMatchers.anyLong(), ArgumentMatchers.any());
+                .andExpect(status().isNotFound());
+        verify(userService).update(anyLong(), any());
     }
 
     @SneakyThrows
     @Test
     void getUserByCorrectId() {
-        Mockito.when(userService.findById(ArgumentMatchers.anyLong())).thenReturn(user);
+        when(userService.findById(anyLong())).thenReturn(user);
 
-        mvc.perform(MockMvcRequestBuilders.get("/users/{userId}", ArgumentMatchers.anyLong())
+        mvc.perform(MockMvcRequestBuilders.get("/users/{userId}", anyLong())
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(userDto.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value(userDto.getEmail()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(userDto.getName()));
-        Mockito.verify(userService).findById(ArgumentMatchers.anyLong());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userDto.getId()))
+                .andExpect(jsonPath("$.email").value(userDto.getEmail()))
+                .andExpect(jsonPath("$.name").value(userDto.getName()));
+        verify(userService).findById(anyLong());
     }
 
     @SneakyThrows
     @Test
     void getUserByIncorrectId() {
-        Mockito.when(userService.findById(ArgumentMatchers.anyLong())).thenThrow(NotFoundException.class);
+        when(userService.findById(anyLong())).thenThrow(NotFoundException.class);
 
-        mvc.perform(MockMvcRequestBuilders.get("/users/{userId}", ArgumentMatchers.anyLong())
+        mvc.perform(MockMvcRequestBuilders.get("/users/{userId}", anyLong())
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
-        Mockito.verify(userService).findById(ArgumentMatchers.anyLong());
+                .andExpect(status().isNotFound());
+        verify(userService).findById(anyLong());
     }
 
     @SneakyThrows
     @Test
     void getAllIsOk() {
-        Mockito.when(userService.getAll()).thenReturn(List.of(user));
+        when(userService.getAll()).thenReturn(List.of(user));
         mvc.perform(MockMvcRequestBuilders.get("/users")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[*]").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[*]").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].id").value(userDto.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].email").value(userDto.getEmail()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[0].name").value(userDto.getName()));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[*]").exists())
+                .andExpect(jsonPath("$.[*]").isNotEmpty())
+                .andExpect(jsonPath("$.size()").value(1))
+                .andExpect(jsonPath("$.[0].id").value(userDto.getId()))
+                .andExpect(jsonPath("$.[0].email").value(userDto.getEmail()))
+                .andExpect(jsonPath("$.[0].name").value(userDto.getName()));
 
-        Mockito.verify(userService).getAll();
+        verify(userService).getAll();
     }
 
     @SneakyThrows
     @Test
     void getAllWithEmptyColection(){
-        Mockito.when(userService.getAll()).thenReturn(List.of());
+        when(userService.getAll()).thenReturn(List.of());
 
         mvc.perform(MockMvcRequestBuilders.get("/users")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[*]").isEmpty());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[*]").isEmpty());
 
-        Mockito.verify(userService).getAll();
+        verify(userService).getAll();
     }
 
     @SneakyThrows
     @Test
     void deleteWithCorrectId(){
-       mvc.perform(MockMvcRequestBuilders.delete("/users/{userId}", ArgumentMatchers.anyLong()))
-               .andExpect(MockMvcResultMatchers.status().isOk());
+       mvc.perform(MockMvcRequestBuilders.delete("/users/{userId}", anyLong()))
+               .andExpect(status().isOk());
 
-       Mockito.verify(userService).deleteById(ArgumentMatchers.anyLong());
+       verify(userService).deleteById(anyLong());
     }
 
     @SneakyThrows
     @Test
     void deleteWithIncorrectId(){
-        Mockito.doThrow(NotFoundException.class).when(userService).deleteById(ArgumentMatchers.anyLong());
+        Mockito.doThrow(NotFoundException.class).when(userService).deleteById(anyLong());
 
-        mvc.perform(MockMvcRequestBuilders.delete("/users/{userId}", ArgumentMatchers.anyLong()))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        mvc.perform(MockMvcRequestBuilders.delete("/users/{userId}", anyLong()))
+                .andExpect(status().isNotFound());
 
-        Mockito.verify(userService).deleteById(ArgumentMatchers.anyLong());
+        verify(userService).deleteById(anyLong());
     }
+
 }
