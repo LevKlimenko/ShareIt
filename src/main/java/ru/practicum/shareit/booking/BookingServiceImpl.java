@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingIncomingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.booking.enumBooking.State;
 import ru.practicum.shareit.booking.enumBooking.Status;
 import ru.practicum.shareit.exceptions.BadRequestException;
 import ru.practicum.shareit.exceptions.InvalidStateException;
@@ -19,7 +17,6 @@ import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -82,28 +79,28 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> findAllForBooker(Long userId, State state, int from, int size) {
+    public List<BookingDto> findAllForBooker(Long userId, String state, int from, int size) {
         Pageable pageable = PageRequest.of(from/size, size, BookingRepository.SORT_BY_DESC);
         findUserById(userId);
         LocalDateTime now = LocalDateTime.now();
         List<Booking> result;
         switch (state) {
-            case ALL:
+            case "ALL":
                 result = bookingRepository.findAllByBookerId(userId, pageable);
                 break;
-            case WAITING:
+            case "WAITING":
                 result = bookingRepository.findAllByBookerIdAndStatusEquals(userId, Status.WAITING, pageable);
                 break;
-            case REJECTED:
+            case "REJECTED":
                 result = bookingRepository.findAllByBookerIdAndStatusEquals(userId, Status.REJECTED, pageable);
                 break;
-            case CURRENT:
+            case "CURRENT":
                 result = bookingRepository.findAllByBookerCurrent(userId, now, pageable);
                 break;
-            case PAST:
+            case "PAST":
                 result = bookingRepository.findAllByBookerIdAndEndBefore(userId, now, pageable);
                 break;
-            case FUTURE:
+            case "FUTURE":
                 result = bookingRepository.findAllFutureForBooker(userId, now, pageable);
                 break;
             default:
@@ -116,7 +113,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> findAllForOwner(Long userId, State state, int from, int size) {
+    public List<BookingDto> findAllForOwner(Long userId, String state, int from, int size) {
         Pageable pageable = PageRequest.of(from/size, size, BookingRepository.SORT_BY_DESC);
         findUserById(userId);
         if (itemRepository.findFirstByOwnerId(userId).isEmpty()) {
@@ -125,22 +122,22 @@ public class BookingServiceImpl implements BookingService {
         LocalDateTime now = LocalDateTime.now();
         List<Booking> result;
         switch (state) {
-            case ALL:
+            case "ALL":
                 result = bookingRepository.findAllByOwner(userId, pageable);
                 break;
-            case WAITING:
+            case "WAITING":
                 result = bookingRepository.findAllByOwnerAndStatus(userId, Status.WAITING, pageable);
                 break;
-            case REJECTED:
+            case "REJECTED":
                 result = bookingRepository.findAllByOwnerAndStatus(userId, Status.REJECTED, pageable);
                 break;
-            case CURRENT:
+            case "CURRENT":
                 result = bookingRepository.findAllByOwnerCurrent(userId, now, pageable);
                 break;
-            case PAST:
+            case "PAST":
                 result = bookingRepository.findAllByOwnerAndEndBefore(userId, now, pageable);
                 break;
-            case FUTURE:
+            case "FUTURE":
                 result = bookingRepository.findAllFutureForOwner(userId, now, pageable);
                 break;
             default:

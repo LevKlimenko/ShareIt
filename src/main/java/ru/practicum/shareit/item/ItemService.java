@@ -12,8 +12,6 @@ public interface ItemService {
 
     ItemDto update(Long itemId, Long userId, ItemInDto item);
 
-    void deleteById(Long itemId, Long userId);
-
     ItemDto findById(Long userId, Long itemId);
 
     List<ItemDto> findByUserId(Long userId, int from, int size);

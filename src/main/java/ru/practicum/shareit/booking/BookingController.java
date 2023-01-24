@@ -5,8 +5,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingIncomingDto;
-import ru.practicum.shareit.booking.enumBooking.State;
-import ru.practicum.shareit.exceptions.InvalidStateException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -41,7 +39,7 @@ public class BookingController {
                                     @RequestParam(required = false, defaultValue = "ALL") String state,
                                     @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                     @RequestParam(defaultValue = "20") @Positive int size) {
-        return service.findAllForBooker(userId, parseBookingState(state.toUpperCase()), from, size);
+        return service.findAllForBooker(userId, state.toUpperCase(), from, size);
     }
 
     @GetMapping("/owner")
@@ -49,14 +47,8 @@ public class BookingController {
                                          @RequestParam(defaultValue = "ALL") String state,
                                          @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                          @RequestParam(defaultValue = "20") @Positive int size) {
-        return service.findAllForOwner(userId, parseBookingState(state.toUpperCase()), from, size);
+        return service.findAllForOwner(userId, state.toUpperCase(), from, size);
     }
 
-    private State parseBookingState(String state) {
-        try {
-            return State.valueOf(state);
-        } catch (IllegalArgumentException exception) {
-            throw new InvalidStateException("Unknown state: " + state);
-        }
-    }
+
 }

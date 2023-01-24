@@ -48,13 +48,6 @@ public class ItemController {
         return upItem;
     }
 
-    @DeleteMapping("/{itemId}")
-    public void delete(@PathVariable("itemId") Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
-        itemService.deleteById(itemId, userId);
-        log.info("The user's item have been deleted for UserID={}, ItemID={}", userId, itemId);
-
-    }
-
     @GetMapping("/{itemId}")
     public ItemDto findById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable("itemId") Long itemId) {
         ItemDto item = itemService.findById(userId, itemId);

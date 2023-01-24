@@ -72,12 +72,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
-    public void deleteById(Long itemId, Long userId) {
-        itemRepository.deleteById(itemId);
-    }
-
-    @Override
     public ItemDto findById(Long userId, Long itemId) {
         Item item = findItemById(itemId);
         if (item.getOwner().getId().equals(userId)) {

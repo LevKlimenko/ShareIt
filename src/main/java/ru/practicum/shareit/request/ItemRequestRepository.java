@@ -12,7 +12,7 @@ public interface ItemRequestRepository extends JpaRepository<ItemRequest, Long> 
         return findById(id).orElseThrow(() -> new NotFoundException("ItemRequest with ID=" + id + " not found"));
     }
 
-    List<ItemRequest> findAllByRequesterIdOrderByCreatedDesc(long userId);
+    List<ItemRequest> findAllByRequesterIdOrderByCreatedDesc(long userId, Pageable pageable);
 
     Page<ItemRequest> findAllByRequesterIdNot(long userId, Pageable pageable);
 

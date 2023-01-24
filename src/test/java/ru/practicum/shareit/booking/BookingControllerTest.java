@@ -171,16 +171,6 @@ public class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void findAllByUserWithBadState() {
-        mvc.perform(MockMvcRequestBuilders.get("/bookings")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("state", "badState")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @SneakyThrows
-    @Test
     void findAllByUserWithLowCaseState() {
         mvc.perform(MockMvcRequestBuilders.get("/bookings")
                         .header("X-Sharer-User-Id", 1L)
@@ -251,16 +241,6 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$.[0].item.name").value(booking.getItem().getName()));
 
         verify(bookingService).findAllForOwner(anyLong(), any(), anyInt(), anyInt());
-    }
-
-    @SneakyThrows
-    @Test
-    void findAllByOwnerWithBadState() {
-        mvc.perform(MockMvcRequestBuilders.get("/bookings/owner")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("state", "badState")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 
     @SneakyThrows

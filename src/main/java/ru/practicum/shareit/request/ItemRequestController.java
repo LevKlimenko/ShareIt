@@ -2,7 +2,6 @@ package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.Create;
@@ -28,16 +27,17 @@ public class ItemRequestController {
     }
 
     @GetMapping()
-    public List<ItemRequestDto> findRequestsByOwner(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return requestService.findAllByOwner(userId);
+    public List<ItemRequestDto> findRequestsByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                    @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                                    @RequestParam(defaultValue = "10") @Positive int size) {
+        return requestService.findAllByOwner(userId,from,size);
     }
 
     @GetMapping("/all")
     public List<ItemRequestDto> findAll(@RequestHeader("X-Sharer-User-Id") Long userId,
                                         @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                         @RequestParam(defaultValue = "10") @Positive int size) {
-        int page = from / size;
-        return requestService.findAll(userId, PageRequest.of(page / size, size));
+        return requestService.findAll(userId, from, size);
     }
 
     @GetMapping("{requestId}")
