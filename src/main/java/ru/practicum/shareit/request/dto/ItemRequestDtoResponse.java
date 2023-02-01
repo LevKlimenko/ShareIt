@@ -12,7 +12,6 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemRequestDtoResponse {
-    //private Long id;
     @NotBlank(groups = {Create.class})
     private String description;
 }
