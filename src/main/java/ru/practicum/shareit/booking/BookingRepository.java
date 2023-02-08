@@ -1,14 +1,11 @@
 package ru.practicum.shareit.booking;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.booking.enumBooking.Status;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 import java.util.Collection;

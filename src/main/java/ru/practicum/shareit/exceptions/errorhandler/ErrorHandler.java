@@ -51,10 +51,10 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleConstraint(final ConstraintViolationException e){
+    public ErrorResponse handleConstraint(final ConstraintViolationException e) {
         log.error(e.getMessage());
         return new ErrorResponse(e.getMessage());
-}
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -70,7 +70,7 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-   @ExceptionHandler
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(final Throwable e) {
         log.error(e.getMessage());

@@ -80,7 +80,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> findAllForBooker(Long userId, String state, int from, int size) {
-        Pageable pageable = PageRequest.of(from/size, size, BookingRepository.SORT_BY_DESC);
+        Pageable pageable = PageRequest.of(from / size, size, BookingRepository.SORT_BY_DESC);
         findUserById(userId);
         LocalDateTime now = LocalDateTime.now();
         List<Booking> result;
@@ -114,7 +114,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> findAllForOwner(Long userId, String state, int from, int size) {
-        Pageable pageable = PageRequest.of(from/size, size, BookingRepository.SORT_BY_DESC);
+        Pageable pageable = PageRequest.of(from / size, size, BookingRepository.SORT_BY_DESC);
         findUserById(userId);
         if (itemRepository.findFirstByOwnerId(userId).isEmpty()) {
             return Collections.emptyList();
@@ -149,11 +149,11 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
-    private User findUserById(Long id){
-        return userRepository.findById(id).orElseThrow(()->new NotFoundException("User with id=" + id+" not found"));
+    private User findUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id=" + id + " not found"));
     }
 
-    private Item findItemById(Long id){
+    private Item findItemById(Long id) {
         return itemRepository.findById(id).orElseThrow(() -> new NotFoundException("Item with ID=" + id + " not found"));
     }
 }

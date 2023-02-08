@@ -10,7 +10,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController

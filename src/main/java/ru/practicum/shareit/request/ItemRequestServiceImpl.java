@@ -41,14 +41,14 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> findAllByOwner(Long userId, int from, int size) {
-        Pageable pageable = PageRequest.of(from/size,size);
+        Pageable pageable = PageRequest.of(from / size, size);
         findUserById(userId);
-        return requestToDto(itemRequestRepository.findAllByRequesterIdOrderByCreatedDesc(userId,pageable));
+        return requestToDto(itemRequestRepository.findAllByRequesterIdOrderByCreatedDesc(userId, pageable));
     }
 
     @Override
     public List<ItemRequestDto> findAll(Long userId, int from, int size) {
-        Pageable pageable = PageRequest.of(from/size,size);
+        Pageable pageable = PageRequest.of(from / size, size);
         findUserById(userId);
         return requestToDto(itemRequestRepository.findAllByRequesterIdNot(userId, pageable)
                 .getContent());
@@ -74,8 +74,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .map(request -> ItemRequestMapper.toDto(request, itemsByRequest.get(request.getId())))
                 .collect(Collectors.toList());
     }
-    private User findUserById(Long id){
-        return userRepository.findById(id).orElseThrow(()->new NotFoundException("User with id=" + id+" not found"));
+
+    private User findUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id=" + id + " not found"));
     }
 
 

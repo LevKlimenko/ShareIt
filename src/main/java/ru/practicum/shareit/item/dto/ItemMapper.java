@@ -55,18 +55,18 @@ public class ItemMapper {
                 .available(itemDto.getAvailable())
                 .requestId(itemDto.getRequestId())
                 .build();
-         }
+    }
 
-         public static Item toItem(ItemDto itemDto, User user){
-             return Item.builder()
-                     .id(itemDto.getId())
-                     .name(itemDto.getName())
-                     .description(itemDto.getDescription())
-                     .available(itemDto.getAvailable())
-                     .requestId(itemDto.getRequestId())
-                     .owner(user)
-                     .build();
-         }
+    public static Item toItem(ItemDto itemDto, User user) {
+        return Item.builder()
+                .id(itemDto.getId())
+                .name(itemDto.getName())
+                .description(itemDto.getDescription())
+                .available(itemDto.getAvailable())
+                .requestId(itemDto.getRequestId())
+                .owner(user)
+                .build();
+    }
 
 
     private BookingBriefDto bookingToBookingBriefDto(Booking booking) {

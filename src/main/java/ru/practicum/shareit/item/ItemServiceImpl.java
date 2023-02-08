@@ -51,9 +51,9 @@ public class ItemServiceImpl implements ItemService {
 
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(user);
-        if(itemDto.getRequestId() !=null ) {
+        if (itemDto.getRequestId() != null) {
             itemRequestRepository.findById(itemDto.getRequestId())
-                    .orElseThrow(()->new NotFoundException("Request with id=" + itemDto.getRequestId() + " not found"));
+                    .orElseThrow(() -> new NotFoundException("Request with id=" + itemDto.getRequestId() + " not found"));
         }
         Item newItem = itemRepository.save(item);
         return ItemMapper.toItemDto(newItem);
@@ -87,14 +87,14 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public List<ItemDto> findByString(String s,int from,int size) {
-        Pageable pageable = PageRequest.of(from/size,size);
-        return itemRepository.findByString(s,pageable).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+    public List<ItemDto> findByString(String s, int from, int size) {
+        Pageable pageable = PageRequest.of(from / size, size);
+        return itemRepository.findByString(s, pageable).stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 
     @Override
-    public List<ItemDto> findByUserId(Long id, int from,int size) {
-        Pageable pageable = PageRequest.of(from/size,size);
+    public List<ItemDto> findByUserId(Long id, int from, int size) {
+        Pageable pageable = PageRequest.of(from / size, size);
         findUserById(id);
         List<Item> items = itemRepository.findAllByOwnerId(id, pageable);
         List<Long> itemIds = items
@@ -106,7 +106,7 @@ public class ItemServiceImpl implements ItemService {
                 .stream()
                 .collect(Collectors.groupingBy(c -> c.getItem().getId()));
 
-        Map<Long, List<Booking>> bookingsByItems = bookingRepository.getAllByItemIdInAndStatus(itemIds,Status.APPROVED)
+        Map<Long, List<Booking>> bookingsByItems = bookingRepository.getAllByItemIdInAndStatus(itemIds, Status.APPROVED)
                 .stream()
                 .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
 
@@ -174,11 +174,12 @@ public class ItemServiceImpl implements ItemService {
                 .min(Comparator.comparing(Booking::getStart))
                 .orElse(null);
     }
-    private User findUserById(Long id){
-        return userRepository.findById(id).orElseThrow(()->new NotFoundException("User with id=" + id+" not found"));
+
+    private User findUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id=" + id + " not found"));
     }
 
-    private Item findItemById(Long id){
-         return itemRepository.findById(id).orElseThrow(() -> new NotFoundException("Item with ID=" + id + " not found"));
+    private Item findItemById(Long id) {
+        return itemRepository.findById(id).orElseThrow(() -> new NotFoundException("Item with ID=" + id + " not found"));
     }
 }

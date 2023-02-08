@@ -1,6 +1,9 @@
 package ru.practicum.shareit.item.comment.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Value;
 
 import java.time.LocalDateTime;
 

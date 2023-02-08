@@ -30,7 +30,7 @@ public class ItemRequestController {
     public List<ItemRequestDto> findRequestsByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                     @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                     @RequestParam(defaultValue = "10") @Positive int size) {
-        return requestService.findAllByOwner(userId,from,size);
+        return requestService.findAllByOwner(userId, from, size);
     }
 
     @GetMapping("/all")

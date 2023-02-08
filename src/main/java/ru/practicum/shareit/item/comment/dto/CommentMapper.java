@@ -27,7 +27,7 @@ public class CommentMapper {
                 .build();
     }
 
-    public static CommentIncomingDto toCommentIncomingDto(Comment comment){
+    public static CommentIncomingDto toCommentIncomingDto(Comment comment) {
         return new CommentIncomingDto(comment.getText());
     }
 }
