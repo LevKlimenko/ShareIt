@@ -11,15 +11,6 @@ import java.util.stream.Collectors;
 @UtilityClass
 public final class ItemRequestMapper {
 
-    /*
-    public static ItemRequestDtoResponse toItemRequestDtoResponse(ItemRequest itemRequest, List <Item> items){
-        return new ItemRequestDtoResponse(
-                itemRequest.getId(),
-                itemRequest.getDescription(),
-                itemRequest.getCreated(),
-                items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList())
-        );
-    }*/
 
     public ItemRequestDto toDto(ItemRequest from) {
         ItemRequestDto mapped = new ItemRequestDto();
@@ -31,13 +22,10 @@ public final class ItemRequestMapper {
 
     public ItemRequestDto toDto(ItemRequest from, List<Item> items) {
         ItemRequestDto mapped = toDto(from);
-        mapped.setItems(
-                items != null
-                        ? items
-                        .stream()
-                        .map(ItemMapper::toItemDto)
-                        .collect(Collectors.toList())
-                        : List.of());
+        mapped.setItems(items
+                .stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList()));
         return mapped;
     }
 }

@@ -71,7 +71,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .collect(Collectors.groupingBy(Item::getRequestId));
         return requests
                 .stream()
-                .map(request -> ItemRequestMapper.toDto(request, itemsByRequest.get(request.getId())))
+                .map(request -> ItemRequestMapper.toDto(request, itemsByRequest.getOrDefault(request.getId(), List.of())))
                 .collect(Collectors.toList());
     }
 
