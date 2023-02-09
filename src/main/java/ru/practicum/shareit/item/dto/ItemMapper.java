@@ -6,6 +6,7 @@ import ru.practicum.shareit.booking.dto.BookingBriefDto;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.comment.Comment;
 import ru.practicum.shareit.item.comment.dto.CommentMapper;
+import ru.practicum.shareit.user.User;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .requestId(item.getRequestId())
                 .build();
     }
 
@@ -31,7 +33,6 @@ public class ItemMapper {
                     .map(CommentMapper::toCommentDto)
                     .collect(Collectors.toList()));
         }
-
         return itemDto;
     }
 
@@ -48,12 +49,25 @@ public class ItemMapper {
     }
 
     public static Item toItem(ItemInDto itemDto) {
-        return new Item(
-                itemDto.getName(),
-                itemDto.getDescription(),
-                itemDto.getAvailable()
-        );
+        return Item.builder()
+                .name(itemDto.getName())
+                .description(itemDto.getDescription())
+                .available(itemDto.getAvailable())
+                .requestId(itemDto.getRequestId())
+                .build();
     }
+
+    public static Item toItem(ItemDto itemDto, User user) {
+        return Item.builder()
+                .id(itemDto.getId())
+                .name(itemDto.getName())
+                .description(itemDto.getDescription())
+                .available(itemDto.getAvailable())
+                .requestId(itemDto.getRequestId())
+                .owner(user)
+                .build();
+    }
+
 
     private BookingBriefDto bookingToBookingBriefDto(Booking booking) {
         BookingBriefDto mapped = new BookingBriefDto();

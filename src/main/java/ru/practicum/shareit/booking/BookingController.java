@@ -1,18 +1,20 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingIncomingDto;
-import ru.practicum.shareit.booking.enumBooking.State;
-import ru.practicum.shareit.exceptions.InvalidStateException;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
+@Validated
 public class BookingController {
     private final BookingService service;
 
@@ -34,21 +36,19 @@ public class BookingController {
 
     @GetMapping()
     public List<BookingDto> findAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                    @RequestParam(required = false, defaultValue = "ALL") String state) {
-        return service.findAllForBooker(userId, parseBookingState(state));
+                                    @RequestParam(required = false, defaultValue = "ALL") String state,
+                                    @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                    @RequestParam(defaultValue = "20") @Positive int size) {
+        return service.findAllForBooker(userId, state.toUpperCase(), from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDto> findAllOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                         @RequestParam(defaultValue = "ALL") String state) {
-        return service.findAllForOwner(userId, parseBookingState(state));
+                                         @RequestParam(defaultValue = "ALL") String state,
+                                         @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                         @RequestParam(defaultValue = "20") @Positive int size) {
+        return service.findAllForOwner(userId, state.toUpperCase(), from, size);
     }
 
-    private State parseBookingState(String state) {
-        try {
-            return State.valueOf(state);
-        } catch (IllegalArgumentException exception) {
-            throw new InvalidStateException("Unknown state: " + state);
-        }
-    }
+
 }

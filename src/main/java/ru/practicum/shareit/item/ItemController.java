@@ -11,18 +11,23 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemInDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/items")
+@Validated
 public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<ItemDto> getAllByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        List<ItemDto> usersItem = itemService.findByUserId(userId);
+    public List<ItemDto> getAllByUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                        @Valid @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                        @Valid @RequestParam(defaultValue = "10") @Positive int size) {
+        List<ItemDto> usersItem = itemService.findByUserId(userId, from, size);
         log.info("The user's items have been received for UserID={}", userId);
         return usersItem;
     }
@@ -43,13 +48,6 @@ public class ItemController {
         return upItem;
     }
 
-    @DeleteMapping("/{itemId}")
-    public void delete(@PathVariable("itemId") Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
-        itemService.deleteById(itemId, userId);
-        log.info("The user's item have been deleted for UserID={}, ItemID={}", userId, itemId);
-
-    }
-
     @GetMapping("/{itemId}")
     public ItemDto findById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable("itemId") Long itemId) {
         ItemDto item = itemService.findById(userId, itemId);
@@ -58,12 +56,14 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> findByRequest(@RequestParam String text) {
+    public List<ItemDto> findByRequest(@RequestParam String text,
+                                       @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                       @RequestParam(defaultValue = "10") @Positive int size) {
         if (text.isBlank()) {
             log.info("No items for empty request");
             return List.of();
         }
-        List<ItemDto> items = itemService.findByString(text);
+        List<ItemDto> items = itemService.findByString(text, from, size);
         log.info("Items were found on request '{}'", text);
         return items;
     }
