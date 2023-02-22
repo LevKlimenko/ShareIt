@@ -9,9 +9,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.exceptions.BadRequestException;
-import ru.practicum.shareit.exceptions.ForbiddenException;
-import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.ForbiddenException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.comment.Comment;
 import ru.practicum.shareit.item.comment.CommentRepository;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
@@ -242,5 +242,4 @@ public class ItemServiceImplTest {
         assertThrows(NotFoundException.class,
                 () -> itemService.createComment(user.getId(), item.getId(), CommentMapper.toCommentIncomingDto(comment)));
     }
-
 }

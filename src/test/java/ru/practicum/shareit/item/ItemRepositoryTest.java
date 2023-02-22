@@ -53,5 +53,4 @@ class ItemRepositoryTest {
         assertEquals(Optional.of(1L), Optional.of(items.get(0).getId()));
         assertEquals("itemDescr", items.get(0).getDescription());
     }
-
 }

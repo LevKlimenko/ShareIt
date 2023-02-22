@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.practicum.shareit.booking.dto.BookingIncomingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.enumBooking.Status;
-import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 
@@ -277,4 +277,3 @@ public class BookingControllerTest {
         verify(bookingService, never()).findAllForOwner(anyLong(), any(), anyInt(), anyInt());
     }
 }
-

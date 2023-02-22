@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.comment.Comment;
 import ru.practicum.shareit.item.comment.dto.CommentIncomingDto;
 import ru.practicum.shareit.item.comment.dto.CommentMapper;
@@ -276,5 +276,3 @@ public class ItemControllerTest {
         verify(itemService).createComment(anyLong(), anyLong(), any());
     }
 }
-
-

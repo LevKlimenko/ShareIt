@@ -43,6 +43,4 @@ public class ItemInDtoTest {
         assertThat(result).extractingJsonPathBooleanValue("$.available").isEqualTo(item.getAvailable());
         assertThat(result).extractingJsonPathNumberValue("$.requestId").isEqualTo(1);
     }
-
-
 }

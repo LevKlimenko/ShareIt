@@ -1,9 +1,10 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 
@@ -23,13 +24,21 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto save(User user) {
-        return UserMapper.toUserDto(repository.save(user));
+        try {
+            return UserMapper.toUserDto(repository.save(user));
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("User with email: " + user.getEmail() + " is already exist.");
+        }
     }
 
     @Override
     @Transactional
     public UserDto update(Long id, User user) {
-        return UserMapper.toUserDto(checkUpdate(id, user));
+        try {
+            return UserMapper.toUserDto(checkUpdate(id, user));
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("User with email: " + user.getEmail() + " is already exist.");
+        }
     }
 
     @Override
