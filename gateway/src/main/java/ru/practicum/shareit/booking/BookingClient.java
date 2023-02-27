@@ -18,7 +18,7 @@ public class BookingClient extends BaseClient {
     private static final String API_PREFIX = "/booking";
 
     @Autowired
-    public BookingClient(@Value("${shareit-rever.url}") String serverUrl, RestTemplateBuilder builder) {
+    public BookingClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
@@ -57,5 +57,3 @@ public class BookingClient extends BaseClient {
         return get("/owner?state={state}&from={from}&size={size}", userId, parameters);
     }
 }
-
-
