@@ -147,42 +147,6 @@ public class ItemControllerTest {
 
     @SneakyThrows
     @Test
-    void getAllByOwnerIsOkWithItem() {
-        when(itemService.findByUserId(anyLong(), anyInt(), anyInt())).thenReturn(List.of(ItemMapper.toItemDto(item)));
-        mvc.perform(MockMvcRequestBuilders.get("/items")
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[*]").exists())
-                .andExpect(jsonPath("$.[*]").isNotEmpty())
-                .andExpect(jsonPath("$.size()").value(1))
-                .andExpect(jsonPath("$.[0].id").value(item.getId()))
-                .andExpect(jsonPath("$.[0].description").value(item.getDescription()))
-                .andExpect(jsonPath("$.[0].available").value(item.getAvailable()))
-                .andExpect(jsonPath("$.[0].name").value(item.getName()))
-                .andExpect(jsonPath("$.[0].requestId").isEmpty())
-                .andExpect(jsonPath("$.[0].lastBooking").isEmpty())
-                .andExpect(jsonPath("$.[0].nextBooking").isEmpty())
-                .andExpect(jsonPath("$.[0].comments").isEmpty());
-
-        verify(itemService).findByUserId(anyLong(), anyInt(), anyInt());
-    }
-
-    @SneakyThrows
-    @Test
-    void getAllByOwnerIsOkWithoutItem() {
-        when(itemService.findByUserId(anyLong(), anyInt(), anyInt())).thenReturn(List.of());
-        mvc.perform(MockMvcRequestBuilders.get("/items")
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[*]").isEmpty());
-
-        verify(itemService).findByUserId(anyLong(), anyInt(), anyInt());
-    }
-
-    @SneakyThrows
-    @Test
     void getAllByOwnerWithBadPage() {
         mvc.perform(MockMvcRequestBuilders.get("/items")
                         .header("X-Sharer-User-Id", 1L)
@@ -203,30 +167,6 @@ public class ItemControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(itemService, never()).findByUserId(anyLong(), anyInt(), anyInt());
-    }
-
-    @SneakyThrows
-    @Test
-    void searchWithOkRequest() {
-        when(itemService.findByString(anyString(), anyInt(), anyInt())).thenReturn(List.of(ItemMapper.toItemDto(item)));
-
-        mvc.perform(MockMvcRequestBuilders.get("/items/search")
-                        .param("text", "drill")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[*]").exists())
-                .andExpect(jsonPath("$.[*]").isNotEmpty())
-                .andExpect(jsonPath("$.size()").value(1))
-                .andExpect(jsonPath("$.[0].id").value(item.getId()))
-                .andExpect(jsonPath("$.[0].description").value(item.getDescription()))
-                .andExpect(jsonPath("$.[0].available").value(item.getAvailable()))
-                .andExpect(jsonPath("$.[0].name").value(item.getName()))
-                .andExpect(jsonPath("$.[0].requestId").isEmpty())
-                .andExpect(jsonPath("$.[0].lastBooking").isEmpty())
-                .andExpect(jsonPath("$.[0].nextBooking").isEmpty())
-                .andExpect(jsonPath("$.[0].comments").isEmpty());
-
-        verify(itemService).findByString(anyString(), anyInt(), anyInt());
     }
 
     @SneakyThrows

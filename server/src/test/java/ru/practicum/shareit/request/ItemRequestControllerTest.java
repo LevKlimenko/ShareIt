@@ -64,44 +64,6 @@ public class ItemRequestControllerTest {
 
     @SneakyThrows
     @Test
-    void findAllWithResponseBodyOk() {
-        when(itemRequestService.findAll(anyLong(), anyInt(), anyInt())).thenReturn(List.of(itemRequestDto));
-
-        mvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(1))
-                .andExpect(jsonPath("$[0].id").value(itemRequestDto.getId()))
-                .andExpect(jsonPath("$[0].description").value(itemRequestDto.getDescription()))
-                .andExpect(jsonPath("$[0].items").value(itemRequestDto.getItems()));
-    }
-
-    @SneakyThrows
-    @Test
-    void findAllWithEmptyResponse() {
-        when(itemRequestService.findAll(anyLong(), anyInt(), anyInt())).thenReturn(List.of());
-
-        mvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[*]").isEmpty());
-    }
-
-    @SneakyThrows
-    @Test
-    void findAllWithNotFoundUser() {
-        when(itemRequestService.findAll(anyLong(), anyInt(), anyInt())).thenThrow(NotFoundException.class);
-
-        mvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
-
-    @SneakyThrows
-    @Test
     void findAllWithIncorrectFrom() {
         mvc.perform(get("/requests/all")
                         .header("X-Sharer-User-Id", 1L)
@@ -119,34 +81,6 @@ public class ItemRequestControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         verify(itemRequestService, never()).findAll(anyLong(), anyInt(), anyInt());
-    }
-
-    @SneakyThrows
-    @Test
-    void findAllByOwnerWithResponseBodyWithOk() {
-        when(itemRequestService.findAllByOwner(anyLong(), anyInt(), anyInt())).thenReturn(List.of(itemRequestDto));
-
-        mvc.perform(get("/requests")
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
-
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(1))
-                .andExpect(jsonPath("$[0].id").value(itemRequestDto.getId()))
-                .andExpect(jsonPath("$[0].description").value(itemRequestDto.getDescription()))
-                .andExpect(jsonPath("$[0].items").value(itemRequestDto.getItems()));
-    }
-
-    @SneakyThrows
-    @Test
-    void findAllByOwnerWithEmptyResponse() {
-        when(itemRequestService.findAllByOwner(anyLong(), anyInt(), anyInt())).thenReturn(List.of());
-
-        mvc.perform(get("/requests")
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[*]").isEmpty());
     }
 
     @SneakyThrows

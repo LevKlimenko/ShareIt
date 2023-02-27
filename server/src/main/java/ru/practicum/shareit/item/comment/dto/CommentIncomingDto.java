@@ -10,6 +10,5 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentIncomingDto {
-    @NotBlank
     private String text;
 }

@@ -6,27 +6,22 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.item.comment.dto.CommentIncomingDto;
-import ru.practicum.shareit.item.dto.Create;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemInDto;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/items")
-@Validated
 public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
     public List<ItemDto> getAllByUserId(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                        @Valid @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                        @Valid @RequestParam(defaultValue = "10") @Positive int size) {
+                                        @RequestParam(required = false) int from,
+                                        @RequestParam(required = false) int size) {
         List<ItemDto> usersItem = itemService.findByUserId(userId, from, size);
         log.info("The user's items have been received for UserID={}", userId);
         return usersItem;
@@ -34,7 +29,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto save(@RequestHeader("X-Sharer-User-Id") Long userId,
-                        @RequestBody @Validated(Create.class) ItemInDto item) {
+                        @RequestBody ItemInDto item) {
         ItemDto addedItem = itemService.save(userId, item);
         log.info("The user's item have been add for UserID={}, ItemID={}", userId, addedItem.getId());
         return addedItem;
@@ -57,8 +52,8 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> findByRequest(@RequestParam String text,
-                                       @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                       @RequestParam(defaultValue = "10") @Positive int size) {
+                                       @RequestParam(required = false) int from,
+                                       @RequestParam(required = false) int size) {
         if (text.isBlank()) {
             log.info("No items for empty request");
             return List.of();
@@ -70,7 +65,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable("itemId") Long itemId,
-                                    @Valid @RequestBody CommentIncomingDto commentIncomingDto) {
+                                    @RequestBody CommentIncomingDto commentIncomingDto) {
         CommentDto commentDto = itemService.createComment(userId, itemId, commentIncomingDto);
         log.info("Comment from user id={} for item id={} have been add", userId, itemId);
         return commentDto;

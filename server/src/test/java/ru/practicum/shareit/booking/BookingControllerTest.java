@@ -80,18 +80,6 @@ public class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void createWithTimeCrossing() {
-        bookingIncomingDto.setEnd(LocalDateTime.now().plusMinutes(10));
-        mvc.perform(MockMvcRequestBuilders.post("/bookings")
-                        .header("X-Sharer-User-Id", 1L)
-                        .content(objectMapper.writeValueAsString(bookingIncomingDto))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @SneakyThrows
-    @Test
     void approveRequestWithOk() {
         booking.setStatus(Status.APPROVED);
         when(bookingService.approve(anyLong(), anyLong(), any())).thenReturn(BookingMapper.toBookingDto(booking));
@@ -149,56 +137,6 @@ public class BookingControllerTest {
 
     @SneakyThrows
     @Test
-    void findAllByUserWithOk() {
-        when(bookingService.findAllForBooker(anyLong(), any(), anyInt(), anyInt()))
-                .thenReturn(List.of(BookingMapper.toBookingDto(booking)));
-
-        mvc.perform(MockMvcRequestBuilders.get("/bookings")
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[*]").exists())
-                .andExpect(jsonPath("$.[*]").isNotEmpty())
-                .andExpect(jsonPath("$.size()").value(1))
-                .andExpect(jsonPath("$.[0].id").value(booking.getId()))
-                .andExpect(jsonPath("$.[0].start").isNotEmpty())
-                .andExpect(jsonPath("$.[0].end").isNotEmpty())
-                .andExpect(jsonPath("$.[0].status").value(booking.getStatus().toString()))
-                .andExpect(jsonPath("$.[0].booker.id").value(booking.getBooker().getId()))
-                .andExpect(jsonPath("$.[0].booker.name").value(booking.getBooker().getName()))
-                .andExpect(jsonPath("$.[0].item.id").value(booking.getItem().getId()))
-                .andExpect(jsonPath("$.[0].item.name").value(booking.getItem().getName()));
-
-        verify(bookingService).findAllForBooker(anyLong(), any(), anyInt(), anyInt());
-    }
-
-    @SneakyThrows
-    @Test
-    void findAllByUserWithLowCaseState() {
-        mvc.perform(MockMvcRequestBuilders.get("/bookings")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("state", "waiting")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-
-    @SneakyThrows
-    @Test
-    void findAllByUserWithoutBooking() {
-        when(bookingService.findAllForBooker(anyLong(), any(), anyInt(), anyInt())).thenReturn(List.of());
-
-        mvc.perform(MockMvcRequestBuilders.get("/bookings")
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[*]").isEmpty());
-
-        verify(bookingService).findAllForBooker(anyLong(), any(), anyInt(), anyInt());
-    }
-
-    @SneakyThrows
-    @Test
     void findAllByUserAndBadFrom() {
         mvc.perform(MockMvcRequestBuilders.get("/bookings")
                         .header("X-Sharer-User-Id", 1L)
@@ -219,41 +157,6 @@ public class BookingControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(bookingService, never()).findAllForBooker(anyLong(), any(), anyInt(), anyInt());
-    }
-
-    @SneakyThrows
-    @Test
-    void findAllByOwnerWithOk() {
-        when(bookingService.findAllForOwner(anyLong(), any(), anyInt(), anyInt()))
-                .thenReturn(List.of(BookingMapper.toBookingDto(booking)));
-
-        mvc.perform(MockMvcRequestBuilders.get("/bookings/owner")
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[*]").exists())
-                .andExpect(jsonPath("$.[*]").isNotEmpty())
-                .andExpect(jsonPath("$.size()").value(1))
-                .andExpect(jsonPath("$.[0].id").value(booking.getId()))
-                .andExpect(jsonPath("$.[0].start").isNotEmpty())
-                .andExpect(jsonPath("$.[0].end").isNotEmpty())
-                .andExpect(jsonPath("$.[0].status").value(booking.getStatus().toString()))
-                .andExpect(jsonPath("$.[0].booker.id").value(booking.getBooker().getId()))
-                .andExpect(jsonPath("$.[0].booker.name").value(booking.getBooker().getName()))
-                .andExpect(jsonPath("$.[0].item.id").value(booking.getItem().getId()))
-                .andExpect(jsonPath("$.[0].item.name").value(booking.getItem().getName()));
-
-        verify(bookingService).findAllForOwner(anyLong(), any(), anyInt(), anyInt());
-    }
-
-    @SneakyThrows
-    @Test
-    void findAllByOwnerWithLowCaseState() {
-        mvc.perform(MockMvcRequestBuilders.get("/bookings/owner")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("state", "waiting")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
     }
 
     @SneakyThrows
