@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking.dto;
 
+import ru.practicum.shareit.exception.InvalidStateException;
+
 public enum BookingState {
     // Все
     ALL,
@@ -20,6 +22,6 @@ public enum BookingState {
                 return state;
             }
         }
-        throw new IllegalArgumentException("Unknown state: " + stringState);
+        throw new InvalidStateException("Unknown state: " + stringState);
     }
 }

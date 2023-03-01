@@ -52,10 +52,10 @@ public class UserControllerTest {
         when(userService.save(any())).thenReturn(userDto);
 
         mvc.perform(MockMvcRequestBuilders.post("/users")
-                        .content(mapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(mapper.writeValueAsString(userDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Matchers.is(user.getId()), Long.class))
                 .andExpect(jsonPath("$.name", Matchers.is(user.getName())))
@@ -74,10 +74,10 @@ public class UserControllerTest {
                 .email("user@email.ru")
                 .build();
         mvc.perform(MockMvcRequestBuilders.post("/users")
-                        .content(mapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(mapper.writeValueAsString(userDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -91,10 +91,10 @@ public class UserControllerTest {
                 .email("user@email.ru")
                 .build();
         mvc.perform(MockMvcRequestBuilders.post("/users")
-                        .content(mapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(mapper.writeValueAsString(userDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -108,10 +108,10 @@ public class UserControllerTest {
                 .email("user.ru")
                 .build();
         mvc.perform(MockMvcRequestBuilders.post("/users")
-                        .content(mapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(mapper.writeValueAsString(userDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -125,10 +125,10 @@ public class UserControllerTest {
                 .email("")
                 .build();
         mvc.perform(MockMvcRequestBuilders.post("/users")
-                        .content(mapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(mapper.writeValueAsString(userDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -142,10 +142,10 @@ public class UserControllerTest {
                 .email(" ")
                 .build();
         mvc.perform(MockMvcRequestBuilders.post("/users")
-                        .content(mapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(mapper.writeValueAsString(userDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -156,10 +156,10 @@ public class UserControllerTest {
         when(userService.update(anyLong(), any())).thenReturn(updateUser);
 
         mvc.perform(MockMvcRequestBuilders.patch("/users/{userId}", 1)
-                        .content(mapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(mapper.writeValueAsString(userDto))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Matchers.is(updateUser.getId()), Long.class))
                 .andExpect(jsonPath("$.name", Matchers.is(updateUser.getName())))
@@ -173,9 +173,9 @@ public class UserControllerTest {
         when(userService.update(anyLong(), any())).thenThrow(NotFoundException.class);
 
         mvc.perform(MockMvcRequestBuilders.patch("/users/{userId}", 1)
-                        .content(mapper.writeValueAsString((userDto)))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(mapper.writeValueAsString((userDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
         verify(userService).update(anyLong(), any());
     }
@@ -189,9 +189,9 @@ public class UserControllerTest {
                 .email("user@email.ru")
                 .build();
         mvc.perform(MockMvcRequestBuilders.patch("/users/{userId}", 1)
-                        .content(mapper.writeValueAsString((userDto)))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(mapper.writeValueAsString((userDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         verify(userService).update(anyLong(), any());
     }
@@ -206,9 +206,9 @@ public class UserControllerTest {
                 .email("user@email.ru")
                 .build();
         mvc.perform(MockMvcRequestBuilders.patch("/users/{userId}", 1)
-                        .content(mapper.writeValueAsString((userDto)))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(mapper.writeValueAsString((userDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         verify(userService).update(anyLong(), any());
     }
@@ -223,9 +223,9 @@ public class UserControllerTest {
                 .email("user.ru")
                 .build();
         mvc.perform(MockMvcRequestBuilders.patch("/users/{userId}", 1)
-                        .content(mapper.writeValueAsString((userDto)))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(mapper.writeValueAsString((userDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -239,9 +239,9 @@ public class UserControllerTest {
                 .email(" ")
                 .build();
         mvc.perform(MockMvcRequestBuilders.patch("/users/{userId}", 1)
-                        .content(mapper.writeValueAsString((userDto)))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .content(mapper.writeValueAsString((userDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -252,9 +252,9 @@ public class UserControllerTest {
         when(userService.findById(anyLong())).thenReturn(user);
 
         mvc.perform(MockMvcRequestBuilders.get("/users/{userId}", anyLong())
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userDto.getId()))
                 .andExpect(jsonPath("$.email").value(userDto.getEmail()))
@@ -268,9 +268,9 @@ public class UserControllerTest {
         when(userService.findById(anyLong())).thenThrow(NotFoundException.class);
 
         mvc.perform(MockMvcRequestBuilders.get("/users/{userId}", anyLong())
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
         verify(userService).findById(anyLong());
     }
@@ -280,9 +280,9 @@ public class UserControllerTest {
     void getAllIsOk() {
         when(userService.getAll()).thenReturn(List.of(user));
         mvc.perform(MockMvcRequestBuilders.get("/users")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[*]").exists())
                 .andExpect(jsonPath("$.[*]").isNotEmpty())
@@ -300,9 +300,9 @@ public class UserControllerTest {
         when(userService.getAll()).thenReturn(List.of());
 
         mvc.perform(MockMvcRequestBuilders.get("/users")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[*]").isEmpty());
 

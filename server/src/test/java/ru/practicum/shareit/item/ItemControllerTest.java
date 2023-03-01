@@ -22,7 +22,6 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -58,10 +57,10 @@ public class ItemControllerTest {
     void createItemOk() {
         when(itemService.save(anyLong(), any())).thenReturn(ItemMapper.toItemDto(item));
         mvc.perform(MockMvcRequestBuilders.post("/items")
-                        .header("X-Sharer-User-Id", 1L)
-                        .content(objectMapper.writeValueAsString(itemDto))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .content(objectMapper.writeValueAsString(itemDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
@@ -82,10 +81,10 @@ public class ItemControllerTest {
                 null, new Booking(), new Booking(), null);
         when(itemService.update(anyLong(), anyLong(), any())).thenReturn(ItemMapper.toItemDto(updatedItem));
         mvc.perform(MockMvcRequestBuilders.patch("/items/{itemId}", 1)
-                        .header("X-Sharer-User-Id", 1L)
-                        .content(objectMapper.writeValueAsString(itemDto))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .content(objectMapper.writeValueAsString(itemDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(updatedItem.getId()))
                 .andExpect(jsonPath("$.description").value(updatedItem.getDescription()))
@@ -104,10 +103,10 @@ public class ItemControllerTest {
     void updateItemWithIncorrectId() {
         when(itemService.update(anyLong(), anyLong(), any())).thenThrow(NotFoundException.class);
         mvc.perform(MockMvcRequestBuilders.patch("/items/{itemId}", 1)
-                        .header("X-Sharer-User-Id", 1L)
-                        .content(objectMapper.writeValueAsString(itemDto))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .content(objectMapper.writeValueAsString(itemDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
         verify(itemService).update(anyLong(), anyLong(), any());
@@ -118,8 +117,8 @@ public class ItemControllerTest {
     void getByCorrectId() {
         when(itemService.findById(anyLong(), anyLong())).thenReturn(ItemMapper.toItemDto(item));
         mvc.perform(MockMvcRequestBuilders.get("/items/{itemId}", 1L)
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(item.getId()))
                 .andExpect(jsonPath("$.description").value(item.getDescription()))
@@ -138,8 +137,8 @@ public class ItemControllerTest {
     void getByIncorrectId() {
         when(itemService.findById(anyLong(), anyLong())).thenThrow(NotFoundException.class);
         mvc.perform(MockMvcRequestBuilders.get("/items/{itemId}", 1L)
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
         verify(itemService).findById(anyLong(), anyLong());
@@ -149,9 +148,9 @@ public class ItemControllerTest {
     @Test
     void getAllByOwnerWithBadPage() {
         mvc.perform(MockMvcRequestBuilders.get("/items")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("from", "-1")
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .param("from", "-1")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
         verify(itemService, never()).findByUserId(anyLong(), anyInt(), anyInt());
@@ -161,9 +160,9 @@ public class ItemControllerTest {
     @Test
     void getAllByOwnerWithBadSize() {
         mvc.perform(MockMvcRequestBuilders.get("/items")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("size", "0")
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .param("size", "0")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
         verify(itemService, never()).findByUserId(anyLong(), anyInt(), anyInt());
@@ -173,10 +172,10 @@ public class ItemControllerTest {
     @Test
     void searchWithBadPage() {
         mvc.perform(MockMvcRequestBuilders.get("/items/search")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("text", "item")
-                        .param("from", "-1")
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .param("text", "item")
+                .param("from", "-1")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
         verify(itemService, never()).findByString(anyString(), anyInt(), anyInt());
@@ -186,10 +185,10 @@ public class ItemControllerTest {
     @Test
     void searchWithBadSize() {
         mvc.perform(MockMvcRequestBuilders.get("/items/search")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("text", "item")
-                        .param("size", "0")
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .param("text", "item")
+                .param("size", "0")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
         verify(itemService, never()).findByString(anyString(), anyInt(), anyInt());
@@ -203,10 +202,10 @@ public class ItemControllerTest {
         Comment comment = new Comment(1L, "comment", item, User.builder().name("userName").build(), LocalDateTime.now().plusMinutes(1));
         when(itemService.createComment(anyLong(), anyLong(), any())).thenReturn(CommentMapper.toCommentDto(comment));
         mvc.perform(MockMvcRequestBuilders.post("/items/{itemId}/comment", item.getId())
-                        .header("X-Sharer-User-Id", 1L)
-                        .content(objectMapper.writeValueAsString(commentIncomingDto))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .content(objectMapper.writeValueAsString(commentIncomingDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(comment.getId()))
                 .andExpect(jsonPath("$.text").value(comment.getText()))

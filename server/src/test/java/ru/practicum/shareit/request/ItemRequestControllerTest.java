@@ -16,7 +16,6 @@ import ru.practicum.shareit.request.dto.ItemRequestDtoResponse;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -51,11 +50,11 @@ public class ItemRequestControllerTest {
         when(itemRequestService.create(anyLong(), any())).thenReturn(itemRequestDto);
 
         mvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", 1L)
-                        .content(mapper.writeValueAsString(itemRequestDtoResponse))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .content(mapper.writeValueAsString(itemRequestDtoResponse))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(itemRequestDto.getId()))
                 .andExpect(jsonPath("$.description").value(itemRequestDto.getDescription()))
@@ -66,9 +65,9 @@ public class ItemRequestControllerTest {
     @Test
     void findAllWithIncorrectFrom() {
         mvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("from", "-1")
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .param("from", "-1")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -76,9 +75,9 @@ public class ItemRequestControllerTest {
     @Test
     void findAllWithIncorrectSize() {
         mvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("size", "0")
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .param("size", "0")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         verify(itemRequestService, never()).findAll(anyLong(), anyInt(), anyInt());
     }
@@ -87,9 +86,9 @@ public class ItemRequestControllerTest {
     @Test
     void findAllByOwnerWithIncorrectFrom() {
         mvc.perform(get("/requests")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("from", "-1")
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .param("from", "-1")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -97,9 +96,9 @@ public class ItemRequestControllerTest {
     @Test
     void findAllByOwnerWithIncorrectSize() {
         mvc.perform(get("/requests")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("size", "0")
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .param("size", "0")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         verify(itemRequestService, never()).findAll(anyLong(), anyInt(), anyInt());
     }
@@ -110,8 +109,8 @@ public class ItemRequestControllerTest {
         when(itemRequestService.get(anyLong(), anyLong())).thenReturn(itemRequestDto);
 
         mvc.perform(get("/requests/{requestId}", 1L)
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(itemRequestDto.getId()))
                 .andExpect(jsonPath("$.description").value(itemRequestDto.getDescription()))
@@ -127,8 +126,8 @@ public class ItemRequestControllerTest {
         when(itemRequestService.get(anyLong(), anyLong())).thenThrow(NotFoundException.class);
 
         mvc.perform(get("/requests/{requestId}", 1L)
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 }

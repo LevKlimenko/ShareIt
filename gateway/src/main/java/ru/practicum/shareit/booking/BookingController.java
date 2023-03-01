@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -12,6 +13,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @Validated
@@ -26,9 +28,9 @@ public class BookingController {
     }
 
     @PatchMapping("/{bookingId}")
-    public ResponseEntity<Object> approveBoking(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                @PathVariable Long bookingId,
-                                                @RequestParam("approved") Boolean approved) {
+    public ResponseEntity<Object> approveBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                                 @PathVariable Long bookingId,
+                                                 @RequestParam boolean approved) {
         return bookingClient.approveBooking(userId, bookingId, approved);
     }
 
@@ -40,21 +42,23 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<Object> findAllByBooker(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                  @RequestParam(required = false, defaultValue = "ALL")
-                                                  String stateBooking,
+                                                  @RequestParam(name = "state", defaultValue = "ALL")
+                                                          String stateBooking,
                                                   @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                   @RequestParam(defaultValue = "20") @Positive int size) {
         BookingState state = BookingState.from(stateBooking);
+        log.info("Get bookings by booker with state {}, bookerId={}, from={}, size={}", state, userId, from, size);
         return bookingClient.getAllByBooker(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public ResponseEntity<Object> findAllByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                 @RequestParam(required = false, defaultValue = "ALL")
-                                                 String stateBooking,
+                                                 @RequestParam(name = "state", defaultValue = "ALL")
+                                                         String stateBooking,
                                                  @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                  @RequestParam(defaultValue = "20") @Positive int size) {
         BookingState state = BookingState.from(stateBooking);
-        return bookingClient.getAllByBooker(userId, state, from, size);
+        log.info("Get bookings by booker with state {}, bookerId={}, from={}, size={}", state, userId, from, size);
+        return bookingClient.getAllByOwner(userId, state, from, size);
     }
 }

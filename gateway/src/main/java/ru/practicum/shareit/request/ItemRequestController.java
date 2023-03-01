@@ -26,15 +26,15 @@ public class ItemRequestController {
 
     @GetMapping
     public ResponseEntity<Object> findRequestsByOwner(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                      @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                                      @RequestParam(defaultValue = "10") @Positive int size) {
+                                                      @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
+                                                      @RequestParam(name = "size", defaultValue = "10") @Positive int size) {
         return requestClient.findRequestsByOwner(userId, from, size);
     }
 
     @GetMapping("/all")
     public ResponseEntity<Object> findAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                          @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                          @RequestParam(defaultValue = "10") @Positive int size) {
+                                          @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
+                                          @RequestParam(name = "size", defaultValue = "10") @Positive int size) {
         return requestClient.findAll(userId, from, size);
     }
 

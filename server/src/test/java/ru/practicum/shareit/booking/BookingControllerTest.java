@@ -10,9 +10,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.BookingController;
-import ru.practicum.shareit.booking.BookingService;
 import ru.practicum.shareit.booking.dto.BookingIncomingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.enumBooking.Status;
@@ -21,11 +18,9 @@ import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,10 +56,10 @@ public class BookingControllerTest {
     void createWithBookingOk() {
         when(bookingService.save(anyLong(), any())).thenReturn(BookingMapper.toBookingDto(booking));
         mvc.perform(MockMvcRequestBuilders.post("/bookings")
-                        .header("X-Sharer-User-Id", 1L)
-                        .content(objectMapper.writeValueAsString(bookingIncomingDto))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .content(objectMapper.writeValueAsString(bookingIncomingDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(booking.getId()))
                 .andExpect(jsonPath("$.start").isNotEmpty())
@@ -85,9 +80,9 @@ public class BookingControllerTest {
         when(bookingService.approve(anyLong(), anyLong(), any())).thenReturn(BookingMapper.toBookingDto(booking));
 
         mvc.perform(MockMvcRequestBuilders.patch("/bookings/{bookingId}", 1L)
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("approved", String.valueOf(true))
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .param("approved", String.valueOf(true))
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(booking.getId()))
                 .andExpect(jsonPath("$.start").isNotEmpty())
@@ -106,8 +101,8 @@ public class BookingControllerTest {
     void findByIdWithOk() {
         when(bookingService.findById(anyLong(), anyLong())).thenReturn(BookingMapper.toBookingDto(booking));
         mvc.perform(MockMvcRequestBuilders.get("/bookings/{bookingId}", 1L)
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(booking.getId()))
                 .andExpect(jsonPath("$.start").isNotEmpty())
@@ -128,8 +123,8 @@ public class BookingControllerTest {
         when(bookingService.findById(anyLong(), anyLong())).thenThrow(NotFoundException.class);
 
         mvc.perform(MockMvcRequestBuilders.get("/bookings/{bookingId}", 1L)
-                        .header("X-Sharer-User-Id", 1L)
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
         verify(bookingService).findById(anyLong(), anyLong());
@@ -139,9 +134,9 @@ public class BookingControllerTest {
     @Test
     void findAllByUserAndBadFrom() {
         mvc.perform(MockMvcRequestBuilders.get("/bookings")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("from", "-1")
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .param("from", "-1")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
         verify(bookingService, never()).findAllForBooker(anyLong(), any(), anyInt(), anyInt());
@@ -151,9 +146,9 @@ public class BookingControllerTest {
     @Test
     void findAllByUserAndBadSize() {
         mvc.perform(MockMvcRequestBuilders.get("/bookings")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("size", "0")
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .param("size", "0")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
         verify(bookingService, never()).findAllForBooker(anyLong(), any(), anyInt(), anyInt());
@@ -163,9 +158,9 @@ public class BookingControllerTest {
     @Test
     void findAllByOwnerAndBadFrom() {
         mvc.perform(MockMvcRequestBuilders.get("/bookings/owner")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("from", "-1")
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .param("from", "-1")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
         verify(bookingService, never()).findAllForOwner(anyLong(), any(), anyInt(), anyInt());
@@ -175,9 +170,9 @@ public class BookingControllerTest {
     @Test
     void findAllByOwnerAndBadSize() {
         mvc.perform(MockMvcRequestBuilders.get("/bookings/owner")
-                        .header("X-Sharer-User-Id", 1L)
-                        .param("size", "0")
-                        .accept(MediaType.APPLICATION_JSON))
+                .header("X-Sharer-User-Id", 1L)
+                .param("size", "0")
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
         verify(bookingService, never()).findAllForOwner(anyLong(), any(), anyInt(), anyInt());
