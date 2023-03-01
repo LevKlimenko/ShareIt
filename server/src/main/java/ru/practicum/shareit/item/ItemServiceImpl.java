@@ -96,7 +96,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> findByUserId(Long id, int from, int size) {
         Pageable pageable = PageRequest.of(from / size, size);
         findUserById(id);
-        List<Item> items = itemRepository.findAllByOwnerId(id, pageable);
+        List<Item> items = itemRepository.findAllByOwnerIdOrderById(id, pageable);
         List<Long> itemIds = items
                 .stream()
                 .map(Item::getId)

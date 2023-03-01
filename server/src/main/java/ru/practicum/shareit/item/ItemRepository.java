@@ -18,7 +18,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     Optional<Item> findFirstByOwnerId(Long ownerId);
 
-    List<Item> findAllByOwnerId(Long id, Pageable pageable);
+    List<Item> findAllByOwnerIdOrderById(Long id, Pageable pageable);
 
     List<Item> findAllByRequestId(Long requestId);
 
