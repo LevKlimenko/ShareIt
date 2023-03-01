@@ -160,7 +160,7 @@ public class ItemServiceImplTest {
     @Test
     void findAllWithOk() {
         lenient().when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(itemRepository.findAllByOwnerId(anyLong(), any())).thenReturn(List.of(item));
+        when(itemRepository.findAllByOwnerIdOrderById(anyLong(), any())).thenReturn(List.of(item));
 
         List<ItemDto> items = itemService.findByUserId(user.getId(), 0, 1);
 
@@ -172,7 +172,7 @@ public class ItemServiceImplTest {
     @Test
     void findAllWithEmptyCollection() {
         lenient().when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(itemRepository.findAllByOwnerId(anyLong(), any())).thenReturn(List.of());
+        when(itemRepository.findAllByOwnerIdOrderById(anyLong(), any())).thenReturn(List.of());
 
         List<ItemDto> actualItems = itemService.findByUserId(user.getId(), 0, 1);
 
