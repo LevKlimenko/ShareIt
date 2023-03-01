@@ -47,7 +47,6 @@ public class BookingController {
                                                   @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                   @RequestParam(defaultValue = "20") @Positive int size) {
         BookingState state = BookingState.from(stateBooking);
-        log.info("Get bookings by booker with state {}, bookerId={}, from={}, size={}", state, userId, from, size);
         return bookingClient.getAllByBooker(userId, state, from, size);
     }
 
@@ -58,7 +57,6 @@ public class BookingController {
                                                  @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                  @RequestParam(defaultValue = "20") @Positive int size) {
         BookingState state = BookingState.from(stateBooking);
-        log.info("Get bookings by booker with state {}, bookerId={}, from={}, size={}", state, userId, from, size);
         return bookingClient.getAllByOwner(userId, state, from, size);
     }
 }
